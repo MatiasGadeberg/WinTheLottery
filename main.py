@@ -1,7 +1,7 @@
 from itertools import combinations
 import pandas as pd
 
-combs = list(combinations(range(1,30),6))
+combs = list(combinations(range(1,40),6))
 
 #n = 10**6
 #comblist = [combs[i * n:(i + 1) * n] for i in range((len(combs) + n - 1) // n )]
