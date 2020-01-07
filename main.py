@@ -1,12 +1,24 @@
 from itertools import combinations
 import pandas as pd
 
-combs = list(combinations(range(1,40),6))
+print("Creating combinations")
+combs = list(combinations(range(1,50),6))
+print("Combinations done")
+n = 10**6
+comblist = [combs[i * n:(i + 1) * n] for i in range((len(combs) + n - 1) // n )]
 
-#n = 10**6
-#comblist = [combs[i * n:(i + 1) * n] for i in range((len(combs) + n - 1) // n )]
-
-df = pd.DataFrame(combs)
+print("Creating dataframe")
+while comblist:
+    df = pd.DataFrame()
+    count = 0
+    for comb in comblist:
+        if df.size > 10**7:
+            break
+        df = pd.concat([df, pd.DataFrame(comb)], ignore_index=True)
+        count += 1
+    comblist = comblist[count:]
+    print(len(comblist))
+    
 
 # pd.DataFrame.from_records(comb, columns=["N1", "N2", "N3", "N4", "N5", "N6"])
 
@@ -22,3 +34,4 @@ total["sumProd"] = total["sum"] * total["SumCount"]
 total["numProd"] = total["N1"] * total["N2"] * total["N3"] * total["N4"] * total["N5"] * total["N6"]
 result = total[total["sumProd"] == total["numProd"]]
 print(result)
+print(total.tail())
