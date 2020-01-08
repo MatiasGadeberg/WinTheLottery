@@ -1,45 +1,91 @@
 from itertools import combinations
 import pandas as pd
+import time
+
+lowNum = 1
+highNum = 49
+binSize = 6
 
 print("Creating combinations")
-combs = list(combinations(range(1,50),6))
+combs = list(combinations(range(lowNum,highNum+1),binSize))
 print("Combinations done")
-n = 10**6
-comblist = [combs[i * n:(i + 1) * n] for i in range((len(combs) + n - 1) // n )]
 
-print("Creating dataframe")
-df1 = pd.DataFrame
-df2 = pd.DataFrame
-df3 = pd.DataFrame
-df4 = pd.DataFrame
+lowsum = sum(range(lowNum,lowNum+6))
+highsum = sum(range(highNum-binSize+1,highNum+1))
 
-while comblist:
-    df = pd.DataFrame()
-    count = 0
-    for comb in comblist:
-        if df.size > 10**7:
-            break
-        df = pd.concat([df, pd.DataFrame(comb)], ignore_index=True)
-        count += 1
-    comblist = comblist[count:]
-    if df1.empty:
-        df1 = df.copy()
-        print("Dataframe 1 copied")
-    elif df2.empty:
-        df2 = df.copy()
-        print("Dataframe 2 copied")
-    elif df3.empty:
-        df3 = df.copy()
-        print("Dataframe 3 copied")
-    elif df4.empty:
-        df4 = df.copy()
-        print("Dataframe 4 copied")
-    print(len(comblist))
+sumRange = list(range(lowsum,highsum+1))
+values = [0] * len(sumRange)
+
+#sumCount = pd.DataFrame(values, index = sumRange, columns = ["count"])
+#winPool = pd.DataFrame()
+
+print("Beginning calculations")
+
+t0 = time.time()
+numSum = [(a+b+c+d+e+f) for a,b,c,d,e,f in combs]
+t1 = time.time()
+
+print("Time used for numSum: {}".format(t1-t0))
+
+t0 = time.time()
+sumCount = [numSum.count(num) for num in sumRange]
+t1 = time.time()
+
+print("Time used for count: {}".format(t1-t0))
+
+lowLim = 990000
+upLim = 1100000
+
+t0 = time.time()
+winPool = [comb for comb in combs if lowLim < comb[0]*comb[1]*comb[2]*comb[3]*comb[4]*comb[5] < upLim]
+t1 = time.time()
+
+print("Time used for indexing: {}".format(t1-t0))
+
+t0 = time.time()
+sumProd = [a*b for a,b in zip(sumRange, sumCount)]
+t1 = time.time()
+
+print("Time used for sumProd: {}".format(t1-t0))
+
+
+t0 = time.time()
+numProd = [(a*b*c*d*e*f) for a,b,c,d,e,f in winPool]
+t1 = time.time()
+
+print("Time used for numProd: {}".format(t1-t0))
+
+winNumProd = [num for num in numProd if lowLim < num < upLim]
+
+result = [num for num in winNumProd if num in sumProd]
+
+print(result)
+
+""" for i, comb in enumerate(combs):
+    sumCount.loc[sum(comb)] += 1
+    #if lowLim < numProd[i] < upLim:
+        #winPool = winPool.append(pd.DataFrame(comb).transpose())
     
+    if i%10**4 == 0:
+        print("{} % complete".format(round(i/tot*100,0)))
+    #print("The sum of {}, {}, {}, {}, {} and {} is {}".format(comb[0],comb[1],comb[2],comb[3],comb[4],comb[5], sum(comb)))
+ """
+
+'''
+winPool.columns = ["N1", "N2", "N3", "N4", "N5", "N6"]
+
+winPool["sum"] = winPool.sum(axis=1)
+total = pd.merge(winPool, sumCount, left_on="sum", right_index=True)
+total["sumProd"] = total["sum"] * total["count"]
+total["numProd"] = total["N1"] * total["N2"] * total["N3"] * total["N4"] * total["N5"] * total["N6"]
+result = total[total["sumProd"] == total["numProd"]]
+print(total)
+print(result)
+
 
 # pd.DataFrame.from_records(comb, columns=["N1", "N2", "N3", "N4", "N5", "N6"])
 
-df1["sum"] = df1.sum(axis=1)
+
 
 sumCount = df1["sum"].value_counts()
 sumCount.columns = "count"
@@ -52,3 +98,4 @@ total["numProd"] = total["N1"] * total["N2"] * total["N3"] * total["N4"] * total
 #result = total[total["sumProd"] == total["numProd"]]
 #print(result)
 print(total.tail())
+'''
