@@ -3,7 +3,7 @@ import pandas as pd
 import time
 
 lowNum = 1
-highNum = 49
+highNum = 30
 binSize = 6
 
 print("Creating combinations")
@@ -33,8 +33,14 @@ t1 = time.time()
 
 print("Time used for count: {}".format(t1-t0))
 
-lowLim = 990000
-upLim = 1100000
+t0 = time.time()
+sumProd = [a*b for a,b in zip(sumRange, sumCount)]
+t1 = time.time()
+
+print("Time used for sumProd: {}".format(t1-t0))
+
+lowLim = 600
+upLim = 70000
 
 t0 = time.time()
 winPool = [comb for comb in combs if lowLim < comb[0]*comb[1]*comb[2]*comb[3]*comb[4]*comb[5] < upLim]
@@ -43,23 +49,32 @@ t1 = time.time()
 print("Time used for indexing: {}".format(t1-t0))
 
 t0 = time.time()
-sumProd = [a*b for a,b in zip(sumRange, sumCount)]
-t1 = time.time()
-
-print("Time used for sumProd: {}".format(t1-t0))
-
-
-t0 = time.time()
-numProd = [(a*b*c*d*e*f) for a,b,c,d,e,f in winPool]
+winProd = [(a*b*c*d*e*f) for a,b,c,d,e,f in winPool]
 t1 = time.time()
 
 print("Time used for numProd: {}".format(t1-t0))
 
-winNumProd = [num for num in numProd if lowLim < num < upLim]
+winSum = [(a+b+c+d+e+f) for a,b,c,d,e,f in winPool]
 
-result = [num for num in winNumProd if num in sumProd]
+winSumProd = [sumProd[sumRange.index(i)] for i in winSum]
 
+""" print(len(winSumProd))
+print(len(winProd)) """
+
+wIndex = [winSumProd[winProd.index(i)] == winProd[winProd.index(i)] for i in winProd]
+print(wIndex)
+""" result = winPool[wIndex]
+resultProd = winProd[wIndex]
+resultSumProd = winSumProd[wIndex] """
+
+
+
+""" print(winPool[:20])
+print(winSumProd[:20])
+print(winProd[:20])
 print(result)
+print(resultProd)
+print(resultSumProd) """
 
 """ for i, comb in enumerate(combs):
     sumCount.loc[sum(comb)] += 1
