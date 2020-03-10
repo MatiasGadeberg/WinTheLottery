@@ -120,3 +120,7 @@ N = (C*F) + B + 10
 W = (D*F) - (A*B) + 1 + 15
 
 print("Coordinates are N43 28.{}, W80 32.{}".format(N, W))
+
+print(total[total["prod"]==1029952])
+for summation, count in zip(sumRange,sumCount):
+    print([summation, count])
